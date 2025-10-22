@@ -1,5 +1,8 @@
+reset:
+	npx prisma migrate reset
+	make migrate
 migrate:
-	npx prisma db push --schema=./prisma/schema.prisma
-	npx prisma generate --schema=./prisma/schema.prisma
+	npx prisma db push
+	npx prisma generate
 seed:
-	npx ts-node ./prisma/seed.ts
+	npx ts-node ./src/seed.ts
