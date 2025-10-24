@@ -6,3 +6,5 @@ migrate:
 	npx prisma generate
 seed:
 	npx ts-node ./src/seed.ts
+server:
+	npx ts-node-dev src/server.ts
