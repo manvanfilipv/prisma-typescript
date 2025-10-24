@@ -1,6 +1,5 @@
 reset:
-	npx prisma migrate reset
-	make migrate
+	npx prisma db push --force-reset
 migrate:
 	npx prisma db push
 	npx prisma generate

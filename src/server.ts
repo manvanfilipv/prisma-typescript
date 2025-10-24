@@ -3,6 +3,7 @@ import cors from "cors";
 import { PrismaClient } from "@prisma/client";
 import userRoutes from "./routes/users";
 import messageRoutes from "./routes/messages";
+import authRoutes from "./routes/auth";
 
 const app = express();
 const prisma = new PrismaClient();
@@ -12,6 +13,7 @@ app.use(express.json());
 
 app.use("/users", userRoutes);
 app.use("/messages", messageRoutes);
+app.use("/auth", authRoutes);
 
 const PORT = 4000;
 
