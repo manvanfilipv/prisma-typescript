@@ -26,11 +26,12 @@ router.post("/login", async (req, res) => {
 
         const jti = uuidv4();
         const { accessToken, refreshToken } = generateTokens(user, jti);
+        const hashedToken = await bcrypt.hash(refreshToken, 10);
 
         await prisma.refreshToken.create({
             data: {
                 id: jti,
-                hashedToken: refreshToken,
+                hashedToken: hashedToken,
                 userId: user.id,
             },
         });
@@ -58,6 +59,11 @@ router.post("/refreshToken", async (req, res) => {
             return res.status(401).json({ error: "Unauthorized" });
         }
 
+        const isTokenValid = await bcrypt.compare(refreshToken, savedRefreshToken.hashedToken);
+        if (!isTokenValid) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+
         const user = await prisma.user.findUnique({ where: { id: payload.userId } });
         if (!user) {
             return res.status(401).json({ error: "Unauthorized" });
@@ -65,6 +71,7 @@ router.post("/refreshToken", async (req, res) => {
 
         const jti = uuidv4();
         const { accessToken, refreshToken: newRefreshToken } = generateTokens(user, jti);
+        const hashedToken = await bcrypt.hash(newRefreshToken, 10);
 
         await prisma.refreshToken.update({
             where: { id: payload.jti },
@@ -76,7 +83,7 @@ router.post("/refreshToken", async (req, res) => {
         await prisma.refreshToken.create({
             data: {
                 id: jti,
-                hashedToken: newRefreshToken,
+                hashedToken: hashedToken,
                 userId: user.id,
             },
         });
